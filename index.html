@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Book Viewer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="title-area">
+            <h1>Color Book by AIR</h1>
+            <span id="loading-status">Loading database...</span>
+        </div>
+        <div class="actions">
+            <!-- excel version download -->
+            <a href="ColorBook_Pantone_Coloro.xlsx" download class="btn-download">
+                Download Color Book
+            </a>
+        </div>
+    </header>
+
+    <main id="workspace">
+        <div class="table-container">
+            <table id="excel-table">
+                <thead id="table-head"></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer id="sheet-tabs" class="tabs-container">
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
