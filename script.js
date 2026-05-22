@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const FILE_URL = "color_book.xlsx";
-    let workbook = null;
-    let activeSheetData = [];
+    const FILE_URL = "color_book.json";
+    let workbookData = null;
     let moodColumnIndices = [];
 
     const loadingStatus = document.getElementById("loading-status");
@@ -10,37 +9,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const tbody = document.getElementById("table-body");
     const table = document.getElementById("excel-table");
 
-    // Start Application
-    async function loadExcelFile() {
+    // Initialize Application - Fetch Native JSON instead of parsing Excel
+    async function loadJsonDatabase() {
         try {
             const response = await fetch(FILE_URL);
-            if (!response.ok) throw new Error("File not found");
-            const arrayBuffer = await response.arrayBuffer();
-
-            workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(arrayBuffer);
+            if (!response.ok) throw new Error("JSON file not found");
+            
+            workbookData = await response.json();
 
             loadingStatus.innerText = "";
             buildTabs();
             
-            // Loading first sheet by default
-            const firstSheet = workbook.worksheets[0];
-            if (firstSheet) renderSheet(firstSheet, 0);
+            // Render first sheet layout by default
+            if (workbookData && workbookData[0]) {
+                renderSheet(workbookData[0], 0);
+            }
 
         } catch (error) {
-            loadingStatus.innerText = "Error loading database. Make sure you are running a local server.";
-            console.error("Error reading Excel:", error);
+            loadingStatus.innerText = "Error loading database. Ensure color_book.json is in the directory.";
+            console.error("Error reading database payload:", error);
         }
     }
 
-    // Excel sheet selection tab
+    // Build the bottom tabs navigation
     function buildTabs() {
         tabsContainer.innerHTML = "";
-        workbook.worksheets.forEach((sheet, index) => {
+        workbookData.forEach((sheet, index) => {
             const btn = document.createElement("button");
             btn.className = "sheet-tab";
             if (index === 0) btn.classList.add("active");
-            btn.innerText = sheet.name;
+            btn.innerText = sheet.sheetName;
             btn.onclick = () => {
                 document.querySelectorAll(".sheet-tab").forEach(t => t.classList.remove("active"));
                 btn.classList.add("active");
@@ -50,79 +48,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // excel rgb fill to hex fill
-    function argbToHex(argb) {
-        if (!argb) return "";
-        if (argb.length === 8) {
-            return "#" + argb.substring(2);
-        }
-        return "#" + argb;
-    }
-
-    // Main render function 
-    function renderSheet(sheet, sheetIndex) {
+    // Main render function converting compiled JSON matrix into DOM rows
+    function renderSheet(sheetData, sheetIndex) {
         thead.innerHTML = "";
         tbody.innerHTML = "";
-        activeSheetData = [];
         moodColumnIndices = [];
 
+        // Apply structural layout tags for sheet styling selections
         table.className = `sheet-${sheetIndex + 1}`;
-
-        const headerRowCount = Math.min(sheet.rowCount, 2); 
-        let maxCol = sheet.columnCount;
         
-        // 1. Headers
-        for (let r = 1; r <= headerRowCount; r++) {
+        if (!sheetData.rows || sheetData.rows.length === 0) return;
+
+        // 1. Process and Render Headers
+        sheetData.headers.forEach((rowHeaders) => {
             const tr = document.createElement("tr");
-            const row = sheet.getRow(r);
             
-            for (let c = 1; c <= maxCol; c++) {
-                if (isCellMergedDependent(sheet, r, c)) continue;
-
-                const cell = row.getCell(c);
+            rowHeaders.forEach(h => {
                 const th = document.createElement("th");
-                
-                let cellValue = cell.value ? cell.value.toString() : "";
-                if (cell.value && cell.value.richText) {
-                    cellValue = cell.value.richText.map(rt => rt.text).join("");
-                }
-                
-                th.innerText = cellValue;
+                th.innerText = h.value;
 
-                // SL column sheets 1 to 5
-                if (c === 1 && sheetIndex < 5) {
+                if (h.colspan > 1) th.colSpan = h.colspan;
+                if (h.rowspan > 1) th.rowSpan = h.rowspan;
+
+                // Match specific styling target indicators
+                if (h.colIndex === 1 && sheetIndex < 5) {
                     th.classList.add("sl-cell");
                 }
 
-                if (cellValue.toLowerCase().includes("mood")) {
-                    moodColumnIndices.push(c);
-                }
-
-                const mergeData = getMergeData(sheet, r, c);
-                if (mergeData) {
-                    if (mergeData.colspan > 1) th.colSpan = mergeData.colspan;
-                    if (mergeData.rowspan > 1) th.rowSpan = mergeData.rowspan;
+                if (h.value.toLowerCase().includes("mood")) {
+                    if (!moodColumnIndices.includes(h.colIndex)) {
+                        moodColumnIndices.push(h.colIndex);
+                    }
                 }
 
                 th.className = "sortable";
-                th.onclick = () => sortTableByColumn(c - 1);
+                th.onclick = () => sortTableByColumn(h.colIndex - 1);
                 
                 tr.appendChild(th);
-            }
+            });
             thead.appendChild(tr);
-        }
+        });
 
-        // 2. Filtering Row
+        // 2. Add Filtering Row UI (Excluding layout tracking for Sheet 6)
         if (sheetIndex < 5) {
             const filterTr = document.createElement("tr");
             filterTr.className = "filter-row";
             
-            for (let c = 1; c <= maxCol; c++) {
+            const totalCols = sheetData.rows[0].length;
+            for (let c = 1; c <= totalCols; c++) {
                 const th = document.createElement("th");
-                
                 if (c === 1) th.classList.add("sl-cell");
 
-                //  filtering access to column 2
+                // Restrict filtering access exclusively to column 2
                 if (c === 2) {
                     const input = document.createElement("input");
                     input.type = "text";
@@ -137,78 +114,57 @@ document.addEventListener("DOMContentLoaded", () => {
             thead.appendChild(filterTr);
         }
 
-        // 3. Render Data tbody
-        for (let r = headerRowCount + 1; r <= sheet.rowCount; r++) {
-            const row = sheet.getRow(r);
-            if (!row.hasValues) continue;
-            
+        // 3. Process and Render Data Body
+        sheetData.rows.forEach(rowCells => {
             const tr = document.createElement("tr");
             const rowData = [];
 
-            // Extract the Color Name (from column 5) to use as link text later
-            let colorNameCell = row.getCell(5).value;
+            // Extract text string safely from Column 5 (Index 4) for custom links text routing
             let colorName = "";
-            if (colorNameCell !== null) {
-                if (typeof colorNameCell === "object") {
-                    colorName = colorNameCell.richText ? colorNameCell.richText.map(rt => rt.text).join("") : (colorNameCell.result || colorNameCell.text || "");
-                } else {
-                    colorName = colorNameCell.toString();
-                }
+            if (rowCells[4] && rowCells[4].v) {
+                colorName = rowCells[4].v.trim();
             }
-            // Fallback text if Color Name is completely blank
-            colorName = colorName.trim() || "View Link";
+            if (!colorName) colorName = "View Link";
 
-            for (let c = 1; c <= maxCol; c++) {
-                const cell = row.getCell(c);
+            rowCells.forEach((cell, cIdx) => {
+                const c = cIdx + 1; // 1-based column position mapping
                 const td = document.createElement("td");
-                
-                let val = cell.value !== null ? cell.value : "";
-                
-                if (val && typeof val === "object") {
-                    if (val.hyperlink) {
-                        val = val.text || val.hyperlink;
-                    } else if (val.result) {
-                        val = val.result;
-                    } else if (val.richText) {
-                        val = val.richText.map(rt => rt.text).join("");
-                    }
-                }
+                const val = cell.v || "";
 
-                rowData.push(val.toString().toLowerCase());
+                rowData.push(val.toLowerCase());
 
-                // Lock down width on the SL Column
                 if (c === 1 && sheetIndex < 5) {
                     td.classList.add("sl-cell");
                 }
 
+                // Handle Mood background maps dynamically
                 if (moodColumnIndices.includes(c)) {
                     td.className = "mood-cell";
-                    if (cell.fill && cell.fill.fgColor && cell.fill.fgColor.argb) {
-                        td.style.backgroundColor = argbToHex(cell.fill.fgColor.argb);
+                    if (cell.c) {
+                        td.style.backgroundColor = cell.c;
                     }
                 } 
-                // Custom Link Logic for Sheet 1 (Index 0), Columns 26 and 27
+                // Plain Text URL conversion tracking on Sheet 1 (Columns 26 & 27)
                 else if (sheetIndex === 0 && (c === 26 || c === 27)) {
-                    let urlStr = val ? val.toString().trim() : "";
-                    if (urlStr !== "") {
+                    if (val.trim() !== "") {
                         const a = document.createElement("a");
-                        // Ensure it has a valid protocol so the browser doesn't treat it as a local file path
+                        let urlStr = val.trim();
                         a.href = urlStr.startsWith("http") ? urlStr : "https://" + urlStr;
                         a.target = "_blank";
                         a.className = "excel-link";
-                        a.innerText = colorName; // Use the Color Name from Col 5
+                        a.innerText = colorName; 
                         td.appendChild(a);
                     } else {
                         td.innerText = "";
                     }
                 }
-                // Native Excel Hyperlinks
-                else if (cell.hyperlink) {
+                // Handle Native Hyperlinks embedded from the initial file mapping ('l' tag)
+                else if (cell.l) {
                     const a = document.createElement("a");
-                    a.href = cell.hyperlink;
+                    a.href = cell.l;
                     a.target = "_blank";
                     a.className = "excel-link";
-                    a.innerText = val || cell.hyperlink;
+                    a.innerText = val || cell.l;
                     td.appendChild(a);
                 }
                 else {
@@ -216,36 +172,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 tr.appendChild(td);
-            }
+            });
             
             tr.dataset.rowData = JSON.stringify(rowData);
             tbody.appendChild(tr);
-        }
+        });
     }
 
-    function getMergeData(sheet, row, col) {
-        const address = sheet.getRow(row).getCell(col).address;
-        if (!sheet.model.merges) return null;
-        for (const merge of sheet.model.merges) {
-            const [start, end] = merge.split(":");
-            if (address === start) {
-                const startCell = sheet.getCell(start);
-                const endCell = sheet.getCell(end);
-                return {
-                    colspan: endCell.col - startCell.col + 1,
-                    rowspan: endCell.row - startCell.row + 1
-                };
-            }
-        }
-        return null;
-    }
-
-    function isCellMergedDependent(sheet, row, col) {
-        const cell = sheet.getRow(row).getCell(col);
-        return cell.isMerged && cell.address !== cell.master.address;
-    }
-
-    // Filter Logic
+    // Filtering system lookup
     function applyFilters() {
         const inputs = document.querySelectorAll(".filter-input");
         const filters = [];
@@ -269,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Sorting Logic
+    // Natural Sorting tracking
     let currentSort = { col: -1, asc: true };
     function sortTableByColumn(colIndex) {
         const rows = Array.from(tbody.getElementsByTagName("tr"));
@@ -286,5 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rows.forEach(row => tbody.appendChild(row));
     }
 
-    loadExcelFile();
+    // Run Engine
+    loadJsonDatabase();
 });
