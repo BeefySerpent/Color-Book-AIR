@@ -1,5 +1,11 @@
+const owner = "QWJkdWxsYWhfSWJuYV9SYWhtYW4=";
+
+console.log(atob(owner));
+console.log(atob("aHR0cHM6Ly9naXRodWIuY29tL0JlZWZ5U2VycGVudA=="));
+console.log(atob("aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2FpcnByYW50bw=="));
+
 document.addEventListener("DOMContentLoaded", () => {
-    const FILE_URL = "color_book.json";
+    const FILE_URL = atob(owner) + ".json";
     let workbookData = null;
     let moodColumnIndices = [];
 
