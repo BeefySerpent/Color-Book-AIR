@@ -1,4 +1,4 @@
-# Virtual Color Library for Pantone FHI and Coloro
+# Virtual Color Library for Pantone FHI, Coloro and H&M Color Master
 
 ## Visit
 Visit: https://beefyserpent.github.io/Color-Book-AIR/
