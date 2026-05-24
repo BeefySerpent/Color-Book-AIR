@@ -11,6 +11,8 @@ This Library is a product of large scale data scraping using Python and Selenium
 - The Pantone TSX, TPM and TN data were collected from **Pantone Connect** (https://connect.pantone.com/).
 - The Coloro Data were collected from **Coloro Workspace** (https://shop.coloro.com/eu/coloro-workspace).
 
+**Python 3.14 and Selenium 4.44.0 was used for Data Scraping**
+
 ---
 
 ## Overview
