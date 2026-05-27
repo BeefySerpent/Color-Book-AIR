@@ -140,7 +140,8 @@ th.sortable {
     cursor: pointer;
 }
 th.sortable:hover {
-    background-color: #e1dfdd;
+    background-color: #ececec;
+    color: #107c41
 }
 
 .filter-row th {
@@ -187,7 +188,8 @@ a.excel-link {
 }
 
 .sheet-tab:hover {
-    background-color: #e1dfdd;
+    background-color: #ececec;
+    color: #a70a0a;
 }
 
 .sheet-tab.active {
