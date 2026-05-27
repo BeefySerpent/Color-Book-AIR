@@ -141,7 +141,7 @@ th.sortable {
 }
 th.sortable:hover {
     background-color: #ececec;
-    color: #107c41
+    color: #107c41;
 }
 
 .filter-row th {
