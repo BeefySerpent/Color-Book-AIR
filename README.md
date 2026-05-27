@@ -17,7 +17,7 @@ This Library is a product of large scale data scraping using Python and Selenium
 
 ## Overview
 
-This virtual library is a web-based tool designed to browse, explore, and analyze a structured color database built by gathering data from numerous sources. It contain around 10,500+ Color data of different identifying standard. It provides an interface similar to a spreadsheet application while enhancing usability for color reference, design exploration, and digital color matching.
+This virtual library is a web-based tool designed to browse, explore, and analyze a structured color database built by gathering data from numerous sources. It contain around **10,500+** Color data of different identifying standard. It provides an interface similar to a spreadsheet application while enhancing usability for color reference, design exploration, and digital color matching.
 
 - Pantone FHI (TCX): 2801 Individual Pantone TCX (Textile Cotton eXtended) Color Details.
 - Pantone FHI (TSX): 203 Individual Pantone TSX (Textile Polyester eXtended) Color Details.
