@@ -100,7 +100,7 @@ th {
 td {
     border: 1px solid var(--excel-border);
     padding: 8px 10px; 
-    font-size: 0.85rem;
+    font-size: 0.80rem;
     white-space: nowrap;
     text-align: left;
     min-width: 80px;
