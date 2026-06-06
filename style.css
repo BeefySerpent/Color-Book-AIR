@@ -1,0 +1,243 @@
+:root {
+    --excel-header-bg: #dbdbdb;
+    --excel-border: #bababa;
+    --excel-active-tab: #a70a0a;
+    --excel-bg: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--excel-bg);
+    overflow: hidden;
+}
+
+/* =========================================================
+   HEADER & LAYOUT
+   ========================================================= */
+.app-header {
+    background-color: #107c41;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.title-area h1 {
+    margin: 0 15px 0 0;
+    font-size: 1.2rem;
+    display: inline-block;
+}
+
+#loading-status { font-size: 0.9rem; opacity: 0.8; }
+
+.btn-download {
+    background-color: white;
+    color: #107c41;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-download:hover { background-color: #effff6; }
+
+#workspace {
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.table-container {
+    height: 100%;
+    overflow: auto;
+}
+
+/* =========================================================
+   TABLE BASE STYLES
+   ========================================================= */
+table {
+    border-collapse: collapse;
+    min-width: 100%;
+    background-color: white;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--excel-header-bg);
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+}
+
+th, td {
+    border: 1px solid var(--excel-border);
+    font-size: 0.80rem;
+    white-space: nowrap;
+}
+
+th {
+    padding: 5px 10px;
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+    position: relative;
+}
+
+td {
+    padding: 8px 10px;
+    text-align: left;
+    min-width: 80px;
+}
+
+/* Shared utility & functional cells */
+th.sortable { cursor: pointer; }
+th.sortable:hover { background-color: #ececec; color: #107c41; }
+td.mood-cell { color: transparent; }
+a.excel-link { color: #0563c1; text-decoration: underline; }
+
+/* Filter UI */
+.filter-row th { padding: 4px; background-color: var(--excel-header-bg); }
+.filter-input { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 0.8rem; }
+.sheet-1 .filter-input { max-width: 100%; box-sizing: border-box; }
+
+/* Tabs */
+.tabs-container {
+    height: 40px;
+    background-color: var(--excel-header-bg);
+    border-top: 1px solid var(--excel-border);
+    display: flex;
+    align-items: flex-end;
+    padding-left: 10px;
+    flex-shrink: 0;
+    overflow-x: auto;
+}
+
+.sheet-tab {
+    padding: 8px 20px;
+    background-color: transparent;
+    border: none;
+    border-right: 1px solid var(--excel-border);
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #666;
+    border-top: 3px solid transparent;
+}
+
+.sheet-tab:hover { background-color: #ececec; color: #a70a0a; }
+.sheet-tab.active {
+    background-color: white;
+    color: var(--excel-active-tab);
+    border-top: 3px solid var(--excel-active-tab);
+    font-weight: 600;
+}
+
+/* =========================================================
+   SHEET SPECIFIC
+   ========================================================= */
+
+/* SL Column Setup */
+th.sl-cell, td.sl-cell {
+    width: 50px !important; min-width: 50px !important; max-width: 50px !important;
+    text-align: center; white-space: nowrap !important;
+}
+
+/* Text Wrapping Exceptions */
+:is(.sheet-1, .sheet-6) thead th { white-space: normal !important; word-break: break-word !important; }
+.sheet-1 th, .sheet-1 td { white-space: normal; word-break: break-word; line-height: 1.4; }
+
+/* Multi-Sheet Shared Columns */
+:is(.sheet-2, .sheet-3, .sheet-4) tbody td:nth-child(2) { width: 280px !important; min-width: 280px !important; max-width: 280px !important; }
+
+/* Sheet 5 Sizing */
+.sheet-5 tbody td:nth-child(2) { width: 120px !important; min-width: 120px !important; max-width: 120px !important; }
+.sheet-5 tbody td:nth-child(8), .sheet-5 tbody td:nth-child(10), .sheet-5 tbody td:nth-child(12), .sheet-5 tbody td:nth-child(14), .sheet-5 tbody td:nth-child(16) { 
+    width: 40px !important; min-width: 40px !important; max-width: 40px !important; 
+}
+
+/* Sheet 6 & 7 Sizing */
+.sheet-6 tbody td:nth-child(5n+1) { width: 40px !important; min-width: 40px !important; max-width: 40px !important; background-color: #f3f2f1; }
+.sheet-7 tbody td:nth-child(1) { width: 50px !important; min-width: 50px !important; max-width: 50px !important; text-align: center; }
+.sheet-7 tbody td:nth-child(13), .sheet-7 tbody td:nth-child(15), .sheet-7 tbody td:nth-child(17), .sheet-7 tbody td:nth-child(19), .sheet-7 tbody td:nth-child(21), .sheet-7 tbody td:nth-child(23) { 
+    width: 40px !important; min-width: 40px !important; max-width: 40px !important; 
+}
+
+/* =========================================================
+   SHEET 1 COLUMN SIZING
+   ========================================================= */
+
+/* 20px Column */
+.sheet-1 tbody td:nth-child(44) { width: 20px; min-width: 20px; max-width: 20px; background-color: #dbdbdb; }
+
+/* 40px Columns */
+.sheet-1 tbody td:nth-child(16), .sheet-1 tbody td:nth-child(18), .sheet-1 tbody td:nth-child(20), .sheet-1 tbody td:nth-child(22), .sheet-1 tbody td:nth-child(24), .sheet-1 tbody td:nth-child(26), .sheet-1 tbody td:nth-child(34), .sheet-1 tbody td:nth-child(36), .sheet-1 tbody td:nth-child(38), .sheet-1 tbody td:nth-child(40), .sheet-1 tbody td:nth-child(42), .sheet-1 tbody td:nth-child(45), .sheet-1 tbody td:nth-child(47), .sheet-1 tbody td:nth-child(49), .sheet-1 tbody td:nth-child(51), .sheet-1 tbody td:nth-child(53) { 
+    width: 40px; min-width: 40px; max-width: 40px; 
+}
+
+/* 60px Columns */
+.sheet-1 tbody td:nth-child(3), .sheet-1 tbody td:nth-child(8) { width: 60px; min-width: 60px; max-width: 60px; }
+
+/* 80px Columns */
+.sheet-1 tbody td:nth-child(10), .sheet-1 tbody td:nth-child(11) { width: 80px; min-width: 80px; max-width: 80px; }
+.sheet-1 tbody td:nth-child(10) { text-align: center; }
+
+/* 100px Columns */
+.sheet-1 tbody td:nth-child(9), .sheet-1 tbody td:nth-child(13), .sheet-1 tbody td:nth-child(35), .sheet-1 tbody td:nth-child(37), .sheet-1 tbody td:nth-child(39), .sheet-1 tbody td:nth-child(41), .sheet-1 tbody td:nth-child(43), .sheet-1 tbody td:nth-child(46), .sheet-1 tbody td:nth-child(48), .sheet-1 tbody td:nth-child(50), .sheet-1 tbody td:nth-child(52), .sheet-1 tbody td:nth-child(54) { 
+    width: 100px; min-width: 100px; max-width: 100px; 
+}
+
+/* 120px Columns */
+.sheet-1 tbody td:nth-child(2), .sheet-1 tbody td:nth-child(5), .sheet-1 tbody td:nth-child(6), .sheet-1 tbody td:nth-child(7), .sheet-1 tbody td:nth-child(12), .sheet-1 tbody td:nth-child(14), .sheet-1 tbody td:nth-child(15), .sheet-1 tbody td:nth-child(17), .sheet-1 tbody td:nth-child(19), .sheet-1 tbody td:nth-child(21), .sheet-1 tbody td:nth-child(23), .sheet-1 tbody td:nth-child(25), .sheet-1 tbody td:nth-child(27), .sheet-1 tbody td:nth-child(32), .sheet-1 tbody td:nth-child(33) { 
+    width: 120px; min-width: 120px; max-width: 120px; 
+}
+.sheet-1 tbody td:nth-child(7) { text-align: center; }
+
+/* 500px Columns */
+.sheet-1 tbody td:nth-child(4), .sheet-1 tbody td:nth-child(28), .sheet-1 tbody td:nth-child(29), .sheet-1 tbody td:nth-child(30), .sheet-1 tbody td:nth-child(31) { 
+    width: 500px; min-width: 500px; max-width: 500px; 
+}
+
+/* =========================================================
+   STICKY COLUMNS (Sheets 1, 5, and 7)
+   ========================================================= */
+
+/* 1. First Column (SL) */
+:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
+    width: 50px !important; min-width: 50px !important; max-width: 50px !important;
+    position: sticky; left: 0; z-index: 1; background-color: white; 
+}
+
+/* 2. Second Column */
+:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(2) {
+    width: 120px !important; min-width: 120px !important; max-width: 120px !important;
+    position: sticky; left: 50px; z-index: 1; background-color: white;
+}
+
+/* 3. Third Column */
+:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(3) {
+    position: sticky; left: 170px; z-index: 1; background-color: white;
+    border-right: 2px solid #a0a0a0; 
+}
+
+/* 4. Fix Header Intersections (Ensures headers float above everything) */
+:is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
+    background-color: var(--excel-header-bg);
+    z-index: 11; 
+}
