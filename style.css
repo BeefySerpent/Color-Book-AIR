@@ -243,9 +243,3 @@ th.sl-cell, td.sl-cell {
         z-index: 11; 
     }
 }
-
-/* 4. Fix Header Intersections (Ensures headers float above everything) */
-:is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
-    background-color: var(--excel-header-bg);
-    z-index: 11; 
-}
