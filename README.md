@@ -112,7 +112,6 @@ Pantone TCXs include external reference links to ColorBook (https://www.colorboo
 
 - Color web references
 - Pantone scan or lookup links
-- 
 These links allow users to explore official or extended color information directly from the dataset.
 
 ---
