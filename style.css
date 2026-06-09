@@ -74,42 +74,21 @@ body {
    TABLE BASE STYLES
    ============================ */
 table {
-    border-collapse: separate; 
-    border-spacing: 0;
+    border-collapse: collapse;
     min-width: 100%;
     background-color: white;
-    border-top: 1px solid var(--excel-border);
-    border-left: 1px solid var(--excel-border);
 }
 
-/* Parent container must be static to prevent WebKit layout loop crashes */
 thead {
-    position: static;
-}
-
-/* Row 1 Header Cells - Sticky Vertically */
-thead tr:first-child th {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: var(--excel-header-bg);
-    height: 52px; /* Uniform height ensures Row 2 anchors perfectly */
-    box-sizing: border-box;
-}
-
-/* Row 2 (Filter Row) Header Cells - Sticky Vertically */
-thead tr.filter-row th {
-    position: sticky;
-    top: 52px; /* Anchors exactly beneath the first header row */
-    z-index: 9;
-    background-color: var(--excel-header-bg);
-    /* Shadow moved here so it draws neatly under the entire header block */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
 }
 
 th, td {
-    border-right: 1px solid var(--excel-border);
-    border-bottom: 1px solid var(--excel-border);
+    border: 1px solid var(--excel-border);
     font-size: 0.80rem;
     white-space: nowrap;
 }
@@ -120,14 +99,12 @@ th {
     font-weight: 600;
     color: #333;
     position: relative;
-    background-clip: padding-box;
 }
 
 td {
     padding: 8px 10px;
     text-align: left;
     min-width: 80px;
-    background-clip: padding-box;
 }
 
 th.sortable { cursor: pointer; }
@@ -236,36 +213,31 @@ th.sl-cell, td.sl-cell {
 }
 
 /* =========================================================
-   STICKY COLUMNS & HEADERS
+   STICKY COLUMNS (Sheets 1, 5, and 7 ONLY) - DESKTOP ONLY
    ========================================================= */
 
-/* 1. Sticky Headers */
-@media (min-width: 769px) {
-    /* We still want the corner overlapping to look clean if they ever do get sticky */
-    :is(.sheet-1, .sheet-5, .sheet-7) thead tr:first-child th:nth-child(-n+3) {
-        z-index: 13; 
-    }
-    :is(.sheet-1, .sheet-5, .sheet-7) thead tr.filter-row th:nth-child(-n+3) {
-        z-index: 12; 
-    }
-}
-
-/* 2. Sticky Columns */
 @media (min-width: 769px) and (hover: hover) and (pointer: fine) {
-    
-    /* First Column */
+    /* 1. First Column (SL) */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
+        width: 50px !important; min-width: 50px !important; max-width: 50px !important;
         position: sticky; left: 0; z-index: 1; background-color: white; 
     }
 
-    /* Second Column */
+    /* 2. Second Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(2) {
+        width: 120px !important; min-width: 120px !important; max-width: 120px !important;
         position: sticky; left: 50px; z-index: 1; background-color: white;
     }
 
-    /* Third Column */
+    /* 3. Third Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(3) {
         position: sticky; left: 170px; z-index: 1; background-color: white;
         border-right: 2px solid #a0a0a0; 
+    }
+
+    /* 4. Fix Header Intersections (Ensures headers float above everything) */
+    :is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
+        background-color: var(--excel-header-bg);
+        z-index: 11; 
     }
 }
