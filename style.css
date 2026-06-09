@@ -236,37 +236,36 @@ th.sl-cell, td.sl-cell {
 }
 
 /* =========================================================
-   STICKY COLUMNS (Sheets 1, 5, and 7)
+   STICKY COLUMNS & HEADERS
    ========================================================= */
 
-
+/* 1. Sticky Headers */
 @media (min-width: 769px) {
-    /* 1. First Column (SL) */
+    /* We still want the corner overlapping to look clean if they ever do get sticky */
+    :is(.sheet-1, .sheet-5, .sheet-7) thead tr:first-child th:nth-child(-n+3) {
+        z-index: 13; 
+    }
+    :is(.sheet-1, .sheet-5, .sheet-7) thead tr.filter-row th:nth-child(-n+3) {
+        z-index: 12; 
+    }
+}
+
+/* 2. Sticky Columns */
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+    
+    /* First Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
-        width: 50px !important; min-width: 50px !important; max-width: 50px !important;
         position: sticky; left: 0; z-index: 1; background-color: white; 
     }
 
-    /* 2. Second Column */
+    /* Second Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(2) {
-        width: 120px !important; min-width: 120px !important; max-width: 120px !important;
         position: sticky; left: 50px; z-index: 1; background-color: white;
     }
 
-    /* 3. Third Column */
+    /* Third Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(3) {
         position: sticky; left: 170px; z-index: 1; background-color: white;
         border-right: 2px solid #a0a0a0; 
-    }
-
-    /* 4. Layering Corner Overlaps (Prevents headers from mixing during cross-scrolls) */
-    :is(.sheet-1, .sheet-5, .sheet-7) thead tr:first-child th:nth-child(-n+3) {
-        background-color: var(--excel-header-bg);
-        z-index: 13; /* Highest priority: Top-Left corner cells */
-    }
-
-    :is(.sheet-1, .sheet-5, .sheet-7) thead tr.filter-row th:nth-child(-n+3) {
-        background-color: var(--excel-header-bg);
-        z-index: 12; /* Mid priority: Filter corner cells */
     }
 }
