@@ -74,9 +74,12 @@ body {
    TABLE BASE STYLES
    ============================ */
 table {
-    border-collapse: collapse;
+    border-collapse: separate; 
+    border-spacing: 0;
     min-width: 100%;
     background-color: white;
+    border-top: 1px solid var(--excel-border);
+    border-left: 1px solid var(--excel-border);
 }
 
 thead {
@@ -88,7 +91,8 @@ thead {
 }
 
 th, td {
-    border: 1px solid var(--excel-border);
+    border-right: 1px solid var(--excel-border);
+    border-bottom: 1px solid var(--excel-border);
     font-size: 0.80rem;
     white-space: nowrap;
 }
@@ -99,12 +103,14 @@ th {
     font-weight: 600;
     color: #333;
     position: relative;
+    background-clip: padding-box;
 }
 
 td {
     padding: 8px 10px;
     text-align: left;
     min-width: 80px;
+    background-clip: padding-box;
 }
 
 th.sortable { cursor: pointer; }
@@ -216,7 +222,7 @@ th.sl-cell, td.sl-cell {
    STICKY COLUMNS (Sheets 1, 5, and 7)
    ========================================================= */
 
-@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+@media (min-width: 769px) {
     /* 1. First Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
         width: 50px !important; min-width: 50px !important; max-width: 50px !important;
