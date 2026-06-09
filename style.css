@@ -82,12 +82,29 @@ table {
     border-left: 1px solid var(--excel-border);
 }
 
+/* Parent container must be static to prevent WebKit layout loop crashes */
 thead {
+    position: static;
+}
+
+/* Row 1 Header Cells - Sticky Vertically */
+thead tr:first-child th {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: var(--excel-header-bg);
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    height: 52px; /* Uniform height ensures Row 2 anchors perfectly */
+    box-sizing: border-box;
+}
+
+/* Row 2 (Filter Row) Header Cells - Sticky Vertically */
+thead tr.filter-row th {
+    position: sticky;
+    top: 52px; /* Anchors exactly beneath the first header row */
+    z-index: 9;
+    background-color: var(--excel-header-bg);
+    /* Shadow moved here so it draws neatly under the entire header block */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
 }
 
 th, td {
@@ -222,8 +239,9 @@ th.sl-cell, td.sl-cell {
    STICKY COLUMNS (Sheets 1, 5, and 7)
    ========================================================= */
 
+
 @media (min-width: 769px) {
-    /* 1. First Column */
+    /* 1. First Column (SL) */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
         width: 50px !important; min-width: 50px !important; max-width: 50px !important;
         position: sticky; left: 0; z-index: 1; background-color: white; 
@@ -241,8 +259,14 @@ th.sl-cell, td.sl-cell {
         border-right: 2px solid #a0a0a0; 
     }
 
-    :is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
+    /* 4. Layering Corner Overlaps (Prevents headers from mixing during cross-scrolls) */
+    :is(.sheet-1, .sheet-5, .sheet-7) thead tr:first-child th:nth-child(-n+3) {
         background-color: var(--excel-header-bg);
-        z-index: 11; 
+        z-index: 13; /* Highest priority: Top-Left corner cells */
+    }
+
+    :is(.sheet-1, .sheet-5, .sheet-7) thead tr.filter-row th:nth-child(-n+3) {
+        background-color: var(--excel-header-bg);
+        z-index: 12; /* Mid priority: Filter corner cells */
     }
 }
