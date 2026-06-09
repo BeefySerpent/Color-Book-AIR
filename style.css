@@ -216,26 +216,27 @@ th.sl-cell, td.sl-cell {
    STICKY COLUMNS (Sheets 1, 5, and 7)
    ========================================================= */
 
-/* 1. First Column (SL) */
-:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
-    width: 50px !important; min-width: 50px !important; max-width: 50px !important;
-    position: sticky; left: 0; z-index: 1; background-color: white; 
-}
+@media (min-width: 769px) {
+    /* 1. First Column */
+    :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
+        width: 50px !important; min-width: 50px !important; max-width: 50px !important;
+        position: sticky; left: 0; z-index: 1; background-color: white; 
+    }
 
-/* 2. Second Column */
-:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(2) {
-    width: 120px !important; min-width: 120px !important; max-width: 120px !important;
-    position: sticky; left: 50px; z-index: 1; background-color: white;
-}
+    /* 2. Second Column */
+    :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(2) {
+        width: 120px !important; min-width: 120px !important; max-width: 120px !important;
+        position: sticky; left: 50px; z-index: 1; background-color: white;
+    }
 
-/* 3. Third Column */
-:is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(3) {
-    position: sticky; left: 170px; z-index: 1; background-color: white;
-    border-right: 2px solid #a0a0a0; 
-}
+    /* 3. Third Column */
+    :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(3) {
+        position: sticky; left: 170px; z-index: 1; background-color: white;
+        border-right: 2px solid #a0a0a0; 
+    }
 
-/* 4. Fix Header Intersections (Ensures headers float above everything) */
-:is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
-    background-color: var(--excel-header-bg);
-    z-index: 11; 
+    :is(.sheet-1, .sheet-5, .sheet-7) :is(thead tr:first-child th, thead tr.filter-row th):nth-child(-n+3) {
+        background-color: var(--excel-header-bg);
+        z-index: 11; 
+    }
 }
