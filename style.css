@@ -216,7 +216,7 @@ th.sl-cell, td.sl-cell {
    STICKY COLUMNS (Sheets 1, 5, and 7)
    ========================================================= */
 
-@media (min-width: 769px) {
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
     /* 1. First Column */
     :is(.sheet-1, .sheet-5, .sheet-7) :is(tbody td, thead tr:first-child th, thead tr.filter-row th):nth-child(1) {
         width: 50px !important; min-width: 50px !important; max-width: 50px !important;
